@@ -1,48 +1,34 @@
 package com.houseofrafa
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.Composable
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.houseofrafa.core.ui.theme.CashizardTheme
-import org.jetbrains.compose.resources.painterResource
-
-import cashizard.composeapp.generated.resources.Res
-import cashizard.composeapp.generated.resources.compose_multiplatform
+import com.houseofrafa.feature.auth.presentation.AuthScreen
+import com.houseofrafa.feature.home.presentation.HomeScreen
+import com.houseofrafa.navigation.Route
 
 @Composable
-@Preview
 fun App() {
+    val navController = rememberNavController()
+
     CashizardTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(CashizardTheme.colors.backgroundPrimary)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
+        NavHost(
+            navController    = navController,
+            startDestination = Route.Auth,
         ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
+            composable<Route.Auth> {
+                AuthScreen(
+                    onNavigateToHome = {
+                        navController.navigate(Route.Home) {
+                            popUpTo<Route.Auth> { inclusive = true }
+                        }
+                    },
+                )
             }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
-                }
+            composable<Route.Home> {
+                HomeScreen()
             }
         }
     }
