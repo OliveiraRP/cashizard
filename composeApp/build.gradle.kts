@@ -1,4 +1,5 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -7,6 +8,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.buildkonfig)
 }
 
 kotlin {
@@ -84,5 +86,15 @@ android {
 
 dependencies {
     debugImplementation(libs.compose.uiTooling)
+}
+
+buildkonfig {
+    packageName = "com.houseofrafa"
+
+    defaultConfigs {
+        val localProps = gradleLocalProperties(rootDir, providers)
+        buildConfigField(STRING, "SUPABASE_URL", localProps.getProperty("supabase.url"))
+        buildConfigField(STRING, "SUPABASE_ANON_KEY", localProps.getProperty("supabase.anon.key"))
+    }
 }
 
