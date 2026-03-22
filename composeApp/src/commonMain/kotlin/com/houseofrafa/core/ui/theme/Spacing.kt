@@ -41,6 +41,8 @@ data class CashizardSpacing(
     val screenTop: Dp        = 16.dp,
     /** Vertical padding at the bottom of a screen (above tab bar). */
     val screenBottom: Dp     = 24.dp,
+    /** Margin top applied to main headers */
+    val marginTopLarge: Dp   = 84.dp,
     /** Standard inner padding for cards and list rows. */
     val cardPadding: Dp      = 16.dp,
     /** Vertical gap between list items. */

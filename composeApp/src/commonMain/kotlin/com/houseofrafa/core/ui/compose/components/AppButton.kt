@@ -1,4 +1,4 @@
-package com.houseofrafa.core.ui.compose.component
+package com.houseofrafa.core.ui.compose.components
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size

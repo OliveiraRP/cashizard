@@ -1,5 +1,6 @@
 package com.houseofrafa.core.ui.icon
 
+import androidx.compose.ui.graphics.vector.ImageVector
 import compose.icons.TablerIcons
 import compose.icons.tablericons.*
 
@@ -58,5 +59,74 @@ object AppIcons {
         val Visibility    = TablerIcons.Eye
         val VisibilityOff = TablerIcons.EyeOff
         val Loading       = TablerIcons.Clock
+    }
+
+    // -------------------------------------------------------------------------
+    // Finance  — wallets, accounts, transaction categories
+    // -------------------------------------------------------------------------
+    object Finance {
+        val Wallet         = TablerIcons.Wallet
+        val Banknote       = TablerIcons.Businessplan
+        val CreditCard     = TablerIcons.CreditCard
+        val Savings        = TablerIcons.Coin
+        val Goal           = TablerIcons.Target
+        val ShoppingCart   = TablerIcons.ShoppingCart
+        val Gift           = TablerIcons.Gift
+        val Travel         = TablerIcons.Plane
+        val Car            = TablerIcons.Car
+        val Home           = TablerIcons.Home
+        val Food           = TablerIcons.Pizza
+        val Coffee         = TablerIcons.Mug
+        val Health         = TablerIcons.Heart
+        val Education      = TablerIcons.School
+        val Entertainment  = TablerIcons.Movie
+        val Utilities      = TablerIcons.Bolt
+        val Briefcase      = TablerIcons.Briefcase
+        val Star           = TablerIcons.Star
+        val CurrencyDollar = TablerIcons.CurrencyDollar
+    }
+
+    // -------------------------------------------------------------------------
+    // fromName — maps an icon name string (stored in DB) to an ImageVector.
+    // Falls back to Finance.Wallet for unknown names.
+    // -------------------------------------------------------------------------
+    fun fromName(name: String): ImageVector = when (name.lowercase()) {
+        "wallet"          -> Finance.Wallet
+        "banknote",
+        "businessplan"    -> Finance.Banknote
+        "creditcard",
+        "credit_card"     -> Finance.CreditCard
+        "savings",
+        "pigmoney",
+        "pig_money"       -> Finance.Savings
+        "goal", "target"  -> Finance.Goal
+        "shoppingcart",
+        "shopping_cart"   -> Finance.ShoppingCart
+        "gift"            -> Finance.Gift
+        "travel", "plane" -> Finance.Travel
+        "car"             -> Finance.Car
+        "home"            -> Finance.Home
+        "food", "salad"   -> Finance.Food
+        "coffee"          -> Finance.Coffee
+        "health", "heart" -> Finance.Health
+        "education",
+        "school"          -> Finance.Education
+        "entertainment",
+        "devicetv",
+        "tv"              -> Finance.Entertainment
+        "utilities",
+        "bolt"            -> Finance.Utilities
+        "briefcase"       -> Finance.Briefcase
+        "star"            -> Finance.Star
+        "currencydollar",
+        "currency_dollar" -> Finance.CurrencyDollar
+        "transactions",
+        "list"            -> Navigation.Transactions
+        "analytics",
+        "chartbar",
+        "chart_bar"       -> Navigation.Analytics
+        "settings"        -> Navigation.Settings
+        "profile", "user" -> Navigation.Profile
+        else              -> Finance.Wallet
     }
 }

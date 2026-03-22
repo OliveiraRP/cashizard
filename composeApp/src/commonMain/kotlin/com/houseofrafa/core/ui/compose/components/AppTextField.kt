@@ -1,4 +1,4 @@
-package com.houseofrafa.core.ui.compose.component
+package com.houseofrafa.core.ui.compose.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn

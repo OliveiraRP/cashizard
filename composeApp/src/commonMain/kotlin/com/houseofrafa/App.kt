@@ -6,7 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.houseofrafa.core.ui.theme.CashizardTheme
 import com.houseofrafa.feature.auth.presentation.AuthScreen
-import com.houseofrafa.feature.home.presentation.HomeScreen
+import com.houseofrafa.feature.wallet.presentation.WalletsScreen
 import com.houseofrafa.navigation.Route
 
 @Composable
@@ -21,14 +21,14 @@ fun App() {
             composable<Route.Auth> {
                 AuthScreen(
                     onNavigateToHome = {
-                        navController.navigate(Route.Home) {
+                        navController.navigate(Route.Wallets) {
                             popUpTo<Route.Auth> { inclusive = true }
                         }
                     },
                 )
             }
-            composable<Route.Home> {
-                HomeScreen()
+            composable<Route.Wallets> {
+                WalletsScreen()
             }
         }
     }

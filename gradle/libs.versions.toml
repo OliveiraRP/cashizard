@@ -16,7 +16,7 @@ kotlinxSerialization = "1.8.1"
 ktor = "3.1.3"
 material3 = "1.10.0-alpha05"
 buildkonfig = "0.15.2"
-supabase = "3.1.4"
+supabase = "3.3.0"
 tablerIcons = "1.1.1"
 multiplatformSettings = "1.2.0"
 koin = "4.0.0"
@@ -49,6 +49,7 @@ navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-co
 
 supabase-bom = { module = "io.github.jan-tennert.supabase:bom", version.ref = "supabase" }
 supabase-postgrest = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
+supabase-auth = { module = "io.github.jan-tennert.supabase:auth-kt" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }

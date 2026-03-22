@@ -6,53 +6,57 @@ import com.houseofrafa.core.domain.model.User
 import com.houseofrafa.feature.auth.data.dto.UserDto
 import com.houseofrafa.feature.auth.data.dto.toDomain
 import com.houseofrafa.feature.auth.domain.repository.AuthRepository
+import io.github.jan.supabase.auth.status.SessionStatus
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.postgrest.postgrest
+import kotlinx.coroutines.flow.first
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
 class AuthRepositoryImpl(
     private val userPreferences: UserPreferences,
 ) : AuthRepository {
 
-    override suspend fun loginWithToken(token: String): Result<User> = runCatching {
-        val matches = supabase.postgrest
+    override suspend fun loginWithEmail(email: String, password: String): Result<User> = runCatching {
+        supabase.auth.signInWith(Email) {
+            this.email = email
+            this.password = password
+        }
+        val user = supabase.postgrest
             .from("users")
-            .select {
-                filter { eq("token", token) }
-                limit(1)
-            }
-            .decodeList<UserDto>()
-
-        val userDto = matches.firstOrNull()
-            ?: error("Token not found")
-
-        val user = userDto.toDomain()
+            .select()
+            .decodeSingle<UserDto>()
+            .toDomain()
         userPreferences.saveUser(user)
         user
     }.onFailure { e ->
         println("AUTH ERROR: ${e::class.simpleName}: ${e.message}")
     }
 
-    override suspend fun validateStoredToken(): Result<User?> = runCatching {
-        val savedUser = userPreferences.getUser() ?: return@runCatching null
-
-        val matches = supabase.postgrest
-            .from("users")
-            .select {
-                filter { eq("token", savedUser.token) }
-                limit(1)
-            }
-            .decodeList<UserDto>()
-
-        if (matches.isEmpty()) {
-            userPreferences.clearUser()
-            null
-        } else {
-            matches.first().toDomain()
+    override suspend fun signUpWithEmail(email: String, password: String, name: String): Result<User> = runCatching {
+        supabase.auth.signUpWith(Email) {
+            this.email = email
+            this.password = password
+            this.data = buildJsonObject { put("name", name) }
         }
+        supabase.auth.currentUserOrNull() ?: error("Sign up failed")
+        val userDto = supabase.postgrest
+            .from("users")
+            .select()
+            .decodeSingle<UserDto>()
+        val user = userDto.toDomain()
+        userPreferences.saveUser(user)
+        user
     }.onFailure { e ->
-        println("VALIDATE TOKEN ERROR: ${e::class.simpleName}: ${e.message}")
+        println("SIGNUP ERROR: ${e::class.simpleName}: ${e.message}")
     }
 
-    override fun getSavedUser(): User? = userPreferences.getUser()
-
-    override fun clearUser() = userPreferences.clearUser()
+    override suspend fun validateSession(): Result<Boolean> = runCatching {
+        supabase.auth.sessionStatus
+            .first { it !is SessionStatus.Initializing }
+            .let { it is SessionStatus.Authenticated }
+    }.onFailure { e ->
+        println("SESSION ERROR: ${e::class.simpleName}: ${e.message}")
+    }
 }
