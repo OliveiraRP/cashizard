@@ -1,11 +1,8 @@
 package com.houseofrafa.feature.wallet.presentation
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
@@ -16,12 +13,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.houseofrafa.core.ui.compose.components.MainHeader
-import com.houseofrafa.core.ui.compose.components.SectionHeader
 import com.houseofrafa.core.ui.compose.templates.MainScreenTemplate
-import com.houseofrafa.core.ui.icon.AppIcons
 import com.houseofrafa.core.ui.theme.CashizardTheme
-import com.houseofrafa.core.util.formatAsCurrency
 import com.houseofrafa.feature.wallet.domain.model.Account
+import com.houseofrafa.feature.wallet.presentation.components.AccountSection
+import com.houseofrafa.feature.wallet.presentation.components.WalletSummary
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -60,8 +56,10 @@ fun WalletsScreen(
                     modifier = Modifier.fillMaxSize(),
                 ) {
                     WalletsContent(
-                        accounts = uiState.accounts,
-                        modifier = Modifier.weight(1f),
+                        accounts         = uiState.accounts,
+                        netWorth         = uiState.netWorth,
+                        investmentsTotal = uiState.investmentsTotal,
+                        modifier         = Modifier.weight(1f),
                     )
                 }
             }
@@ -72,39 +70,25 @@ fun WalletsScreen(
 @Composable
 private fun WalletsContent(
     accounts: List<Account>,
+    netWorth: Double,
+    investmentsTotal: Double,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         modifier       = modifier,
         contentPadding = PaddingValues(bottom = CashizardTheme.spacing.screenBottom),
     ) {
+        item(key = "summary_cards") {
+            WalletSummary(
+                netWorth = netWorth,
+                investmentsTotal = investmentsTotal,
+                modifier = Modifier.padding(bottom = CashizardTheme.spacing.xl),
+            )
+        }
         accounts.forEach { account ->
             item(key = "account_${account.id}") {
-                AccountSectionHeader(account = account) {
-                    account.wallets.forEach { wallet ->
-                        WalletCard(
-                            wallet   = wallet,
-                            modifier = Modifier.padding(vertical = CashizardTheme.spacing.xxs),
-                        )
-                    }
-                    Spacer(Modifier.height(CashizardTheme.spacing.xl))
-                }
+                AccountSection(account = account)
             }
         }
     }
-}
-
-@Composable
-private fun AccountSectionHeader(
-    account: Account,
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit,
-) {
-    SectionHeader(
-        title        = account.name,
-        icon         = AppIcons.fromName(account.icon),
-        trailingText = account.balance.formatAsCurrency(),
-        modifier     = modifier,
-        content      = content,
-    )
 }

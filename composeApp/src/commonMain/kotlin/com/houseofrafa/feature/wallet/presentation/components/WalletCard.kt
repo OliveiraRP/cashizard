@@ -1,4 +1,4 @@
-package com.houseofrafa.feature.wallet.presentation
+package com.houseofrafa.feature.wallet.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,14 +42,20 @@ fun WalletCard(
                 Text(
                     text  = wallet.name,
                     style = CashizardTheme.typography.bodyMedium,
-                    color = CashizardTheme.colors.textSecondary,
-                )
-                Text(
-                    text  = wallet.balance.formatAsCurrency(),
-                    style = CashizardTheme.typography.titleMedium,
                     color = CashizardTheme.colors.textPrimary,
                 )
+                Text(
+                    text  = wallet.walletType.name.lowercase().replaceFirstChar { it.uppercase() },
+                    style = CashizardTheme.typography.bodySmall,
+                    color = CashizardTheme.colors.textSecondary,
+                )
             }
+
+            Text(
+                text  = wallet.balance.formatAsCurrency(),
+                style = CashizardTheme.typography.titleMedium,
+                color = CashizardTheme.colors.textPrimary,
+            )
         }
     }
 }

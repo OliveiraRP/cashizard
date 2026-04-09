@@ -3,6 +3,7 @@ package com.houseofrafa.feature.wallet.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.houseofrafa.feature.wallet.domain.model.Account
+import com.houseofrafa.feature.wallet.domain.model.WalletType
 import com.houseofrafa.feature.wallet.domain.repository.WalletRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,6 +14,8 @@ import kotlinx.coroutines.launch
 data class WalletsUiState(
     val isLoading: Boolean = true,
     val accounts: List<Account> = emptyList(),
+    val netWorth: Double = 0.0,
+    val investmentsTotal: Double = 0.0,
     val errorMessage: String? = null,
 )
 
@@ -32,7 +35,21 @@ class WalletsViewModel(
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             walletRepository.getAccounts()
                 .onSuccess { accounts ->
-                    _uiState.update { it.copy(isLoading = false, accounts = accounts) }
+                    val allWallets = accounts.flatMap { it.wallets }
+                    val netWorth = allWallets
+                        .filter { !it.archived && it.includeNetWorth }
+                        .sumOf { it.balance }
+                    val investmentsTotal = allWallets
+                        .filter { !it.archived && it.walletType == WalletType.INVESTMENTS }
+                        .sumOf { it.balance }
+                    _uiState.update {
+                        it.copy(
+                            isLoading        = false,
+                            accounts         = accounts,
+                            netWorth         = netWorth,
+                            investmentsTotal = investmentsTotal,
+                        )
+                    }
                 }
                 .onFailure { e ->
                     _uiState.update { it.copy(isLoading = false, errorMessage = e.message ?: "Unknown error") }
