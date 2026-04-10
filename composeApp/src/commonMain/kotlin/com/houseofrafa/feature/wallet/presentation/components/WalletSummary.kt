@@ -35,6 +35,7 @@ fun WalletSummary(
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(CashizardTheme.spacing.xs),
         modifier            = modifier.fillMaxWidth(),
     ) {
         HorizontalPager(
@@ -43,36 +44,32 @@ fun WalletSummary(
         ) { page ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier            = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = CashizardTheme.spacing.sm),
+                verticalArrangement = Arrangement.spacedBy(CashizardTheme.spacing.xs),
+                modifier            = Modifier.fillMaxWidth(),
             ) {
                 Text(
                     text  = items[page].amount.formatAsCurrency(),
-                    style = CashizardTheme.typography.displaySmall,
+                    style = CashizardTheme.typography.headlineLarge,
                     color = CashizardTheme.colors.textPrimary,
                 )
                 Text(
-                    text     = items[page].label,
-                    style    = CashizardTheme.typography.bodyMedium,
-                    color    = CashizardTheme.colors.textSecondary,
-                    modifier = Modifier.padding(top = CashizardTheme.spacing.xxs),
+                    text  = items[page].label,
+                    style = CashizardTheme.typography.bodyMedium,
+                    color = CashizardTheme.colors.textSecondary,
                 )
             }
         }
-
         Row(
             horizontalArrangement = Arrangement.spacedBy(CashizardTheme.spacing.xxs),
-            modifier              = Modifier.padding(top = CashizardTheme.spacing.sm),
         ) {
             repeat(items.size) { index ->
                 Box(
                     modifier = Modifier
                         .size(6.dp)
                         .background(
-                            color  = if (index == pagerState.currentPage) CashizardTheme.colors.brandPrimary
-                                     else CashizardTheme.colors.textTertiary,
-                            shape  = CircleShape,
+                            color = if (index == pagerState.currentPage) CashizardTheme.colors.brandPrimary
+                                    else CashizardTheme.colors.textTertiary,
+                            shape = CircleShape,
                         )
                 )
             }

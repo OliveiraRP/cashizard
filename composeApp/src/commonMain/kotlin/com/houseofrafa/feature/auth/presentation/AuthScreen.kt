@@ -22,7 +22,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.houseofrafa.core.ui.compose.components.AppButton
+import com.houseofrafa.core.ui.compose.components.LoadingButton
 import com.houseofrafa.core.ui.compose.components.AppTextField
 import com.houseofrafa.core.ui.compose.templates.MainScreenTemplate
 import com.houseofrafa.core.ui.theme.CashizardTheme
@@ -101,7 +101,7 @@ fun AuthScreen(
 
                     Spacer(Modifier.height(CashizardTheme.spacing.md))
 
-                    AppButton(
+                    LoadingButton(
                         text      = if (uiState.isLoginMode) "Log in" else "Sign up",
                         onClick   = viewModel::submit,
                         enabled   = uiState.email.isNotBlank() && uiState.password.isNotBlank() &&

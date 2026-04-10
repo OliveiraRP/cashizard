@@ -1,5 +1,6 @@
 package com.houseofrafa.feature.wallet.presentation.components
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,12 +17,12 @@ fun AccountSection(
     account: Account,
     modifier: Modifier = Modifier,
 ) {
-    SectionHeader(
-        title        = account.name,
-        icon         = AppIcons.fromName(account.icon),
-        trailingText = account.balance.formatAsCurrency(),
-        modifier     = modifier,
-    ) {
+    Column(modifier = modifier) {
+        SectionHeader(
+            title        = account.name,
+            icon         = AppIcons.fromName(account.icon),
+            trailingText = account.balance.formatAsCurrency(),
+        )
         account.wallets.forEach { wallet ->
             WalletCard(
                 wallet   = wallet,
