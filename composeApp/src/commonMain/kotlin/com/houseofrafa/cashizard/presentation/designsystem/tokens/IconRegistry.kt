@@ -8,6 +8,7 @@ import com.composables.icons.lucide.Banknote
 import com.composables.icons.lucide.Beer
 import com.composables.icons.lucide.Bike
 import com.composables.icons.lucide.BookOpen
+import com.composables.icons.lucide.Brain
 import com.composables.icons.lucide.Briefcase
 import com.composables.icons.lucide.Brush
 import com.composables.icons.lucide.Building2
@@ -26,19 +27,24 @@ import com.composables.icons.lucide.CreditCard
 import com.composables.icons.lucide.Croissant
 import com.composables.icons.lucide.Dog
 import com.composables.icons.lucide.DollarSign
+import com.composables.icons.lucide.Droplets
 import com.composables.icons.lucide.Dumbbell
 import com.composables.icons.lucide.Euro
 import com.composables.icons.lucide.Flame
 import com.composables.icons.lucide.Fuel
 import com.composables.icons.lucide.Gamepad
 import com.composables.icons.lucide.Gamepad2
+import com.composables.icons.lucide.Gem
 import com.composables.icons.lucide.Gift
 import com.composables.icons.lucide.Globe
 import com.composables.icons.lucide.GraduationCap
 import com.composables.icons.lucide.Hammer
 import com.composables.icons.lucide.HandCoins
+import com.composables.icons.lucide.HandPlatter
 import com.composables.icons.lucide.Heart
+import com.composables.icons.lucide.HeartHandshake
 import com.composables.icons.lucide.House
+import com.composables.icons.lucide.Lamp
 import com.composables.icons.lucide.Landmark
 import com.composables.icons.lucide.Laptop
 import com.composables.icons.lucide.Leaf
@@ -47,6 +53,8 @@ import com.composables.icons.lucide.Map
 import com.composables.icons.lucide.MicVocal
 import com.composables.icons.lucide.Mountain
 import com.composables.icons.lucide.Music
+import com.composables.icons.lucide.Package
+import com.composables.icons.lucide.PartyPopper
 import com.composables.icons.lucide.PenTool
 import com.composables.icons.lucide.Percent
 import com.composables.icons.lucide.Phone
@@ -56,6 +64,8 @@ import com.composables.icons.lucide.Plane
 import com.composables.icons.lucide.PlugZap
 import com.composables.icons.lucide.Receipt
 import com.composables.icons.lucide.Scissors
+import com.composables.icons.lucide.Shield
+import com.composables.icons.lucide.ShieldPlus
 import com.composables.icons.lucide.Shirt
 import com.composables.icons.lucide.ShoppingBag
 import com.composables.icons.lucide.ShoppingCart
@@ -71,6 +81,8 @@ import com.composables.icons.lucide.Ticket
 import com.composables.icons.lucide.TrainFront
 import com.composables.icons.lucide.TrendingDown
 import com.composables.icons.lucide.TrendingUp
+import com.composables.icons.lucide.Trophy
+import com.composables.icons.lucide.Truck
 import com.composables.icons.lucide.Tv
 import com.composables.icons.lucide.Umbrella
 import com.composables.icons.lucide.Undo2
@@ -79,6 +91,7 @@ import com.composables.icons.lucide.Vault
 import com.composables.icons.lucide.Wallet
 import com.composables.icons.lucide.Wifi
 import com.composables.icons.lucide.Wrench
+import com.composables.icons.lucide.Zap
 
 /**
  * Maps the kebab-case icon-name strings stored in the DB to Lucide vectors.
@@ -183,6 +196,19 @@ val icons: Map<String, ImageVector> = mapOf(
     "shopping-bag" to Lucide.ShoppingBag,
     "pie-chart" to Lucide.ChartPie,
     "sparkles" to Lucide.Sparkles,
+    "package" to Lucide.Package,
+    "truck" to Lucide.Truck,
+    "lamp" to Lucide.Lamp,
+    "zap" to Lucide.Zap,
+    "droplets" to Lucide.Droplets,
+    "shield" to Lucide.Shield,
+    "shield-plus" to Lucide.ShieldPlus,
+    "brain" to Lucide.Brain,
+    "gem" to Lucide.Gem,
+    "hand-platter" to Lucide.HandPlatter,
+    "heart-handshake" to Lucide.HeartHandshake,
+    "party-popper" to Lucide.PartyPopper,
+    "trophy" to Lucide.Trophy,
 )
 
 /** Fallback icon for unknown names. */
