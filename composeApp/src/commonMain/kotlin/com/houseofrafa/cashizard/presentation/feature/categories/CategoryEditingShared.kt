@@ -137,13 +137,20 @@ internal fun Hint(message: String, modifier: Modifier = Modifier) {
     }
 }
 
-/** The three group types, in the order the design's segmented control shows them. */
+/**
+ * The group types the segmented control offers when creating a group. Transfer is
+ * excluded: transfers use a single fixed system group, so users never author
+ * transfer categories or groups.
+ */
 internal val groupTypeOptions: List<Pair<TransactionType, String>> = listOf(
     TransactionType.EXPENSE to "Expense",
     TransactionType.INCOME to "Income",
-    TransactionType.TRANSFER to "Transfer",
 )
 
 /** The type's name, for prose in hints. */
 internal val TransactionType.label: String
-    get() = groupTypeOptions.first { it.first == this }.second
+    get() = when (this) {
+        TransactionType.EXPENSE -> "Expense"
+        TransactionType.INCOME -> "Income"
+        TransactionType.TRANSFER -> "Transfer"
+    }
