@@ -313,7 +313,9 @@ private fun MonthSwitcher(label: String, onPrevious: () -> Unit, onNext: () -> U
             style = CashizardTheme.typography.headline,
             color = colors.textPrimary,
             textAlign = TextAlign.Center,
-            modifier = Modifier.width(150.dp).padding(horizontal = 22.dp),
+            maxLines = 1,
+            softWrap = false,
+            modifier = Modifier.width(160.dp),
         )
         MonthChevron(Lucide.ChevronRight, "Next month", onNext)
     }

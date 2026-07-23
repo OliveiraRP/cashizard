@@ -12,8 +12,16 @@ private val monthNames = listOf(
     "July", "August", "September", "October", "November", "December",
 )
 
-/** "July 2026" — the month switcher's label. */
-fun LocalDate.monthYearLabel(): String = "${monthNames[monthNumber - 1]} $year"
+/**
+ * "July 2026" — the month switcher's label. The year is dropped when it matches
+ * the current year, so most of the time it reads simply "July".
+ */
+fun LocalDate.monthYearLabel(
+    today: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
+): String {
+    val name = monthNames[monthNumber - 1]
+    return if (year == today.year) name else "$name $year"
+}
 
 /** "12 July" — a compact date for transaction subtitles. */
 fun LocalDate.dayMonthLabel(): String = "$dayOfMonth ${monthNames[monthNumber - 1]}"
