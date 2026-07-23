@@ -13,7 +13,11 @@ data class CategoryGroup(
     val sortOrder: Int,
 )
 
-/** A category within a group. [icon] is a DB icon-name string. */
+/**
+ * A category within a group. [icon] is a DB icon-name string.
+ * [excludeFromAnalytics] keeps the category working for transactions while
+ * leaving its spending out of the Analytics screen's totals.
+ */
 data class Category(
     val id: String,
     val groupId: String,
@@ -21,6 +25,7 @@ data class Category(
     val icon: String,
     val sortOrder: Int,
     val archived: Boolean,
+    val excludeFromAnalytics: Boolean = false,
 )
 
 /** A group together with its (non-archived) categories, for pickers/analytics. */

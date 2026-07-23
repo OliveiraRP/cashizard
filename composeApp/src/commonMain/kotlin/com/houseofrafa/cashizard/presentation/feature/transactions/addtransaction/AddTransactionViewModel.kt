@@ -118,6 +118,9 @@ class AddTransactionViewModel(
 
     fun onCategoryIconChange(icon: String) = updateCategoryForm { it.copy(icon = icon) }
 
+    fun onCategoryExcludeChange(excluded: Boolean) =
+        updateCategoryForm { it.copy(excludeFromAnalytics = excluded) }
+
     fun onSaveGroup() {
         val form = _state.value.groupForm ?: return
         if (!form.canSave) return
@@ -169,7 +172,12 @@ class AddTransactionViewModel(
             try {
                 if (form.categoryId == null) {
                     categoryRepository.createCategory(
-                        NewCategory(groupId = groupId, name = form.name.trim(), icon = form.icon),
+                        NewCategory(
+                            groupId = groupId,
+                            name = form.name.trim(),
+                            icon = form.icon,
+                            excludeFromAnalytics = form.excludeFromAnalytics,
+                        ),
                     )
                 } else {
                     categoryRepository.updateCategory(
@@ -178,10 +186,14 @@ class AddTransactionViewModel(
                             groupId = groupId,
                             name = form.name.trim(),
                             icon = form.icon,
+                            excludeFromAnalytics = form.excludeFromAnalytics,
                         ),
                     )
                 }
                 refreshCategories()
+                // A category's analytics-exclusion flag may have changed, so the
+                // Analytics tab behind the sheet must recompute its totals.
+                spaceSession.notifyDataChanged()
                 _events.send(AddTransactionEvent.FormSaved)
             } catch (e: Exception) {
                 updateCategoryForm {

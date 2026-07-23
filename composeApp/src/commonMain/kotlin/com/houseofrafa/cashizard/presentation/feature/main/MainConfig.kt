@@ -48,4 +48,7 @@ sealed interface SheetConfig {
 
     @Serializable
     data class WalletDetails(val walletId: String) : SheetConfig
+
+    @Serializable
+    data object FilterCategories : SheetConfig
 }

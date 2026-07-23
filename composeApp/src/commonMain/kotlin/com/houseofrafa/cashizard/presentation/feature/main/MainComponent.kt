@@ -18,6 +18,7 @@ import com.houseofrafa.cashizard.presentation.arch.koinViewModel
 import com.houseofrafa.cashizard.presentation.feature.transactions.addtransaction.AddTransactionSheetComponent
 import com.houseofrafa.cashizard.presentation.feature.transactions.addtransaction.EditingTransaction
 import com.houseofrafa.cashizard.presentation.feature.analytics.AnalyticsViewModel
+import com.houseofrafa.cashizard.presentation.feature.analytics.filtercategories.FilterCategoriesSheetComponent
 import com.houseofrafa.cashizard.presentation.feature.transactions.TransactionsViewModel
 import com.houseofrafa.cashizard.presentation.feature.wallets.addaccount.AddAccountSheetComponent
 import com.houseofrafa.cashizard.presentation.feature.wallets.addwallet.AddWalletSheetComponent
@@ -95,6 +96,8 @@ class MainComponent(
     /** Tapping a wallet on the Wallets tab opens its detail sheet. */
     fun onWalletClick(walletId: String) = openSheet(SheetConfig.WalletDetails(walletId))
 
+    fun onFilterCategoriesClick() = openSheet(SheetConfig.FilterCategories)
+
     /** No space means nothing to attach to, so the sheet stays closed. */
     private fun openSheet(config: SheetConfig) {
         if (viewModel.hasActiveSpace()) sheetNavigation.activate(config)
@@ -157,6 +160,10 @@ class MainComponent(
                     onDismiss = dismiss,
                 ),
             )
+
+            SheetConfig.FilterCategories -> SheetChild.FilterCategories(
+                FilterCategoriesSheetComponent(context, onDismiss = dismiss),
+            )
         }
     }
 
@@ -183,5 +190,6 @@ class MainComponent(
         data class AddWallet(val component: AddWalletSheetComponent) : SheetChild
         data class AddAccount(val component: AddAccountSheetComponent) : SheetChild
         data class WalletSheet(val component: WalletSheetComponent) : SheetChild
+        data class FilterCategories(val component: FilterCategoriesSheetComponent) : SheetChild
     }
 }

@@ -24,6 +24,7 @@ data class NewCategory(
     val name: String,
     val icon: String = "tag",
     val sortOrder: Int = 0,
+    val excludeFromAnalytics: Boolean = false,
 )
 
 data class UpdateCategory(
@@ -31,4 +32,5 @@ data class UpdateCategory(
     val groupId: String,
     val name: String,
     val icon: String,
+    val excludeFromAnalytics: Boolean,
 )

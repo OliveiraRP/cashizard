@@ -18,6 +18,8 @@ data class CategoryFormUiState(
     val name: String = "",
     val icon: String = "tag",
     val restrictToType: TransactionType = TransactionType.EXPENSE,
+    /** When true, this category's transactions are left out of Analytics. */
+    val excludeFromAnalytics: Boolean = false,
     val saving: Boolean = false,
     val errorMessage: String? = null,
 ) {
@@ -33,6 +35,7 @@ data class CategoryFormUiState(
                 name = category.name,
                 icon = category.icon,
                 restrictToType = group.type,
+                excludeFromAnalytics = category.excludeFromAnalytics,
             )
 
         /** A new category defaults into the first group of the active type. */

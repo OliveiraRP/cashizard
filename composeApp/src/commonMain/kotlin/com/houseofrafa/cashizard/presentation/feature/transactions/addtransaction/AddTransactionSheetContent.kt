@@ -196,6 +196,7 @@ private fun SheetChild(
                     onNameChange = component.viewModel::onCategoryNameChange,
                     onPickGroup = component::onPickCategoryGroup,
                     onPickIcon = component::onPickCategoryIcon,
+                    onExcludeChange = component.viewModel::onCategoryExcludeChange,
                 )
             }
 

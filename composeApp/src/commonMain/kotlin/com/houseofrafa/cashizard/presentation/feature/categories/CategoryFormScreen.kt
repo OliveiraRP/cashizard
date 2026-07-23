@@ -1,20 +1,27 @@
 package com.houseofrafa.cashizard.presentation.feature.categories
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Shapes
 import com.houseofrafa.cashizard.domain.model.CategoryGroup
 import com.houseofrafa.cashizard.presentation.common.PickerRow
+import com.houseofrafa.cashizard.presentation.designsystem.components.CashSwitch
 import com.houseofrafa.cashizard.presentation.designsystem.components.FormCard
 import com.houseofrafa.cashizard.presentation.designsystem.components.IconDisc
 import com.houseofrafa.cashizard.presentation.designsystem.components.IconDiscStyle
@@ -35,6 +42,7 @@ fun CategoryFormScreen(
     onNameChange: (String) -> Unit,
     onPickGroup: () -> Unit,
     onPickIcon: () -> Unit,
+    onExcludeChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val dimens = CashizardTheme.dimens
@@ -101,6 +109,21 @@ fun CategoryFormScreen(
             ),
         )
 
+        SectionHeader(title = "Analytics", style = CashizardTheme.typography.sectionLabelSmall)
+        FormCard(
+            modifier = Modifier.padding(horizontal = dimens.listPadding),
+            cornerRadius = dimens.radiusControl,
+            rows = listOf(
+                {
+                    SwitchRow(
+                        label = "Exclude from analytics",
+                        checked = form.excludeFromAnalytics,
+                        onCheckedChange = onExcludeChange,
+                    )
+                },
+            ),
+        )
+
         if (group == null) {
             Hint(
                 "There are no ${form.restrictToType.label.lowercase()} groups yet — " +
@@ -110,5 +133,31 @@ fun CategoryFormScreen(
 
         FormError(form.errorMessage)
         Spacer(Modifier.height(dimens.space32).navigationBarsPadding())
+    }
+}
+
+/** A label with a trailing iOS switch, sized to match the form's other rows. */
+@Composable
+private fun SwitchRow(
+    label: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    val dimens = CashizardTheme.dimens
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = dimens.rowHeight)
+            .padding(horizontal = dimens.space16, vertical = dimens.space8),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(dimens.space12),
+    ) {
+        Text(
+            text = label,
+            style = CashizardTheme.typography.bodyLarge,
+            color = CashizardTheme.colors.textPrimary,
+            modifier = Modifier.weight(1f),
+        )
+        CashSwitch(checked = checked, onCheckedChange = onCheckedChange)
     }
 }

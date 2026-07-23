@@ -59,7 +59,11 @@ class GetSpendingBreakdown(
         val meta = mutableMapOf<String, SliceMeta>()
 
         groups.forEach { entry ->
-            entry.categories.forEach { category ->
+            // Categories flagged out of analytics contribute nothing here — not to
+            // a slice, a total or a percentage — and a group whose visible
+            // categories all lack spending simply never gets a slice.
+            val visibleCategories = entry.categories.filterNot { it.excludeFromAnalytics }
+            visibleCategories.forEach { category ->
                 // At the top level everything in a group folds into one slice;
                 // drilled in, each category is its own slice.
                 val key = when {
@@ -72,9 +76,9 @@ class GetSpendingBreakdown(
                         name = if (groupId == null) entry.group.name else category.name,
                         colorHex = entry.group.color,
                         // Groups carry no icon in the schema, so a group slice
-                        // borrows its first category's.
+                        // borrows its first visible category's.
                         iconName = if (groupId == null) {
-                            entry.categories.firstOrNull()?.icon ?: category.icon
+                            visibleCategories.firstOrNull()?.icon ?: category.icon
                         } else {
                             category.icon
                         },

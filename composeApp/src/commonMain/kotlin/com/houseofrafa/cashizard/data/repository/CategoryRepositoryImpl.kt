@@ -1,6 +1,7 @@
 package com.houseofrafa.cashizard.data.repository
 
 import com.houseofrafa.cashizard.data.dto.CategoryDto
+import com.houseofrafa.cashizard.data.dto.CategoryExclusionUpdateDto
 import com.houseofrafa.cashizard.data.dto.CategoryGroupDto
 import com.houseofrafa.cashizard.data.dto.CategoryGroupInsertDto
 import com.houseofrafa.cashizard.data.dto.CategoryGroupUpdateDto
@@ -66,6 +67,7 @@ class CategoryRepositoryImpl(
                 name = command.name,
                 icon = command.icon,
                 sortOrder = command.sortOrder,
+                excludeFromAnalytics = command.excludeFromAnalytics,
             ),
         ) { select() }.decodeSingle<CategoryDto>().toDomain()
 
@@ -83,11 +85,22 @@ class CategoryRepositoryImpl(
                 groupId = command.groupId,
                 name = command.name,
                 icon = command.icon,
+                excludeFromAnalytics = command.excludeFromAnalytics,
             ),
         ) {
             select()
             filter { eq("id", command.id) }
         }.decodeSingle<CategoryDto>().toDomain()
+
+    override suspend fun setExcludedFromAnalytics(changes: Map<String, Boolean>) {
+        changes.forEach { (id, excluded) ->
+            client.from("categories").update(
+                CategoryExclusionUpdateDto(excludeFromAnalytics = excluded),
+            ) {
+                filter { eq("id", id) }
+            }
+        }
+    }
 
     private suspend fun fetchGroups(spaceId: String): List<CategoryGroupDto> =
         client.from("category_groups").select {

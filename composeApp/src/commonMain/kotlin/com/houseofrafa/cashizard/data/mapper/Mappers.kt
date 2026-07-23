@@ -70,6 +70,7 @@ fun CategoryDto.toDomain(): Category = Category(
     icon = icon,
     sortOrder = sortOrder,
     archived = archived,
+    excludeFromAnalytics = excludeFromAnalytics,
 )
 
 fun TransactionDto.toDomain(): Transaction = Transaction(

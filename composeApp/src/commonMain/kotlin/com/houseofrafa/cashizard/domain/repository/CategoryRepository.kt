@@ -23,4 +23,10 @@ interface CategoryRepository {
     suspend fun updateGroup(command: UpdateCategoryGroup): CategoryGroup
 
     suspend fun updateCategory(command: UpdateCategory): Category
+
+    /**
+     * Bulk-writes the analytics-exclusion flag for the given categories
+     * (id -> excluded). Callers pass only the categories whose flag changed.
+     */
+    suspend fun setExcludedFromAnalytics(changes: Map<String, Boolean>)
 }

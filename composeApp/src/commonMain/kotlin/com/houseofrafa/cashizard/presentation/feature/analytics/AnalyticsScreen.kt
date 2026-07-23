@@ -24,7 +24,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -32,18 +34,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.ChevronRight
+import com.composables.icons.lucide.Ellipsis
+import com.composables.icons.lucide.ListFilter
 import com.composables.icons.lucide.Lucide
 import com.houseofrafa.cashizard.domain.usecase.SpendingSlice
 import com.houseofrafa.cashizard.presentation.common.ScreenHeader
 import com.houseofrafa.cashizard.presentation.common.monthYearLabel
 import com.houseofrafa.cashizard.presentation.designsystem.theme.CashizardTheme
 import com.houseofrafa.cashizard.presentation.designsystem.tokens.CategoryColors
+import com.houseofrafa.cashizard.presentation.designsystem.components.CircleIconButton
 import com.houseofrafa.cashizard.presentation.designsystem.components.DonutChart
 import com.houseofrafa.cashizard.presentation.designsystem.components.DonutSlice
 import com.houseofrafa.cashizard.presentation.designsystem.components.FormCard
 import com.houseofrafa.cashizard.presentation.designsystem.components.IconDisc
 import com.houseofrafa.cashizard.presentation.designsystem.components.IconDiscStyle
 import com.houseofrafa.cashizard.presentation.designsystem.components.MicroProgressBar
+import com.houseofrafa.cashizard.presentation.designsystem.components.PopoverMenu
+import com.houseofrafa.cashizard.presentation.designsystem.components.PopoverMenuItem
 import com.houseofrafa.cashizard.presentation.designsystem.format.formatEur
 import com.houseofrafa.cashizard.presentation.designsystem.tokens.iconFor
 import kotlin.math.roundToInt
@@ -52,58 +59,90 @@ import kotlin.math.roundToInt
 fun AnalyticsScreen(
     viewModel: AnalyticsViewModel,
     spaceName: String?,
+    onFilterCategories: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.state.collectAsState()
     val colors = CashizardTheme.colors
     val dimens = CashizardTheme.dimens
+    var menuOpen by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.background)
-            .statusBarsPadding(),
-    ) {
-        ScreenHeader(
-            title = "Analytics",
-            spaceName = spaceName,
-            modifier = Modifier.padding(top = dimens.space16),
-        )
+    Box(modifier = modifier.fillMaxSize().background(colors.background)) {
+        Column(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
+            ScreenHeader(
+                title = "Analytics",
+                spaceName = spaceName,
+                modifier = Modifier.padding(top = dimens.space16),
+                trailing = {
+                    CircleIconButton(
+                        icon = Lucide.Ellipsis,
+                        onClick = { menuOpen = true },
+                        contentDescription = "Analytics options",
+                        size = 32.dp,
+                        iconSize = 18.dp,
+                    )
+                },
+            )
 
-        MonthSwitcher(
-            label = state.month.monthYearLabel(),
-            onPrevious = viewModel::onPreviousMonth,
-            onNext = viewModel::onNextMonth,
-        )
+            MonthSwitcher(
+                label = state.month.monthYearLabel(),
+                onPrevious = viewModel::onPreviousMonth,
+                onNext = viewModel::onNextMonth,
+            )
 
-        when {
-            state.loading && state.breakdown == null -> Centered {
-                CircularProgressIndicator(
-                    color = colors.accent,
-                    strokeWidth = 2.dp,
-                    modifier = Modifier.size(28.dp),
-                )
+            when {
+                state.loading && state.breakdown == null -> Centered {
+                    CircularProgressIndicator(
+                        color = colors.accent,
+                        strokeWidth = 2.dp,
+                        modifier = Modifier.size(28.dp),
+                    )
+                }
+
+                state.errorMessage != null -> Centered {
+                    Text(
+                        text = state.errorMessage.orEmpty(),
+                        style = CashizardTheme.typography.footnote,
+                        color = colors.textTertiary,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+
+                state.isEmpty -> Centered {
+                    Text(
+                        text = "No spending recorded this month.",
+                        style = CashizardTheme.typography.footnote,
+                        color = colors.textTertiary,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+
+                else -> Breakdown(viewModel, state)
             }
+        }
 
-            state.errorMessage != null -> Centered {
-                Text(
-                    text = state.errorMessage.orEmpty(),
-                    style = CashizardTheme.typography.footnote,
-                    color = colors.textTertiary,
-                    textAlign = TextAlign.Center,
-                )
-            }
-
-            state.isEmpty -> Centered {
-                Text(
-                    text = "No spending recorded this month.",
-                    style = CashizardTheme.typography.footnote,
-                    color = colors.textTertiary,
-                    textAlign = TextAlign.Center,
-                )
-            }
-
-            else -> Breakdown(viewModel, state)
+        if (menuOpen) {
+            // A full-screen catcher closes the menu on any outside tap, which is
+            // how iOS context menus behave.
+            Box(
+                modifier = Modifier.fillMaxSize().clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = { menuOpen = false },
+                ),
+            )
+            PopoverMenu(
+                items = listOf(
+                    PopoverMenuItem("Filter categories", Lucide.ListFilter) {
+                        menuOpen = false
+                        onFilterCategories()
+                    },
+                ),
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .statusBarsPadding()
+                    .padding(top = 68.dp, end = dimens.screenPadding),
+            )
         }
     }
 }

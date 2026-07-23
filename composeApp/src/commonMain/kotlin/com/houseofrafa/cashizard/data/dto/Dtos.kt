@@ -74,6 +74,7 @@ data class CategoryDto(
     val icon: String,
     @SerialName("sort_order") val sortOrder: Int,
     val archived: Boolean,
+    @SerialName("exclude_from_analytics") val excludeFromAnalytics: Boolean = false,
 )
 
 @Serializable
@@ -163,6 +164,7 @@ data class CategoryInsertDto(
     val name: String,
     val icon: String,
     @SerialName("sort_order") val sortOrder: Int,
+    @SerialName("exclude_from_analytics") val excludeFromAnalytics: Boolean = false,
 )
 
 @Serializable
@@ -176,6 +178,13 @@ data class CategoryUpdateDto(
     @SerialName("group_id") val groupId: String,
     val name: String,
     val icon: String,
+    @SerialName("exclude_from_analytics") val excludeFromAnalytics: Boolean,
+)
+
+/** Writes only the analytics-exclusion flag, for the bulk filter sheet. */
+@Serializable
+data class CategoryExclusionUpdateDto(
+    @SerialName("exclude_from_analytics") val excludeFromAnalytics: Boolean,
 )
 
 @Serializable

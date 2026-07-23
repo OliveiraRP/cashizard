@@ -27,6 +27,7 @@ import com.houseofrafa.cashizard.presentation.designsystem.components.TabBar
 import com.houseofrafa.cashizard.presentation.designsystem.components.TabItem
 import com.houseofrafa.cashizard.presentation.feature.transactions.addtransaction.AddTransactionSheetContent
 import com.houseofrafa.cashizard.presentation.feature.analytics.AnalyticsScreen
+import com.houseofrafa.cashizard.presentation.feature.analytics.filtercategories.FilterCategoriesSheetContent
 import com.houseofrafa.cashizard.presentation.feature.transactions.TransactionsScreen
 import com.houseofrafa.cashizard.presentation.feature.wallets.addaccount.AddAccountSheetContent
 import com.houseofrafa.cashizard.presentation.feature.wallets.addwallet.AddWalletSheetContent
@@ -81,6 +82,7 @@ fun MainContent(component: MainComponent, modifier: Modifier = Modifier) {
                         AnalyticsScreen(
                             viewModel = instance.viewModel,
                             spaceName = activeSpace?.name,
+                            onFilterCategories = component::onFilterCategoriesClick,
                         )
                 }
             }
@@ -140,6 +142,16 @@ fun MainContent(component: MainComponent, modifier: Modifier = Modifier) {
                     closeRequested = state.closeRequested,
                 ) {
                     WalletSheetContent(instance.component)
+                }
+            }
+
+            is MainComponent.SheetChild.FilterCategories -> {
+                val state by instance.component.viewModel.state.collectAsState()
+                PageSheet(
+                    onDismissRequest = instance.component::onDismissed,
+                    closeRequested = state.closeRequested,
+                ) {
+                    FilterCategoriesSheetContent(instance.component)
                 }
             }
 
