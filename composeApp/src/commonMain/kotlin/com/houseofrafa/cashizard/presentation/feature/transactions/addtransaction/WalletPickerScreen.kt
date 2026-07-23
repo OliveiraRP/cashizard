@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.Lucide
+import com.houseofrafa.cashizard.domain.model.TransactionType
 import com.houseofrafa.cashizard.presentation.designsystem.theme.CashizardTheme
 import com.houseofrafa.cashizard.presentation.designsystem.components.CashListRow
 import com.houseofrafa.cashizard.presentation.designsystem.components.FormCard
@@ -40,9 +41,16 @@ fun WalletPickerScreen(
     val colors = CashizardTheme.colors
     val dimens = CashizardTheme.dimens
 
-    val excludedId = when (target) {
-        WalletTarget.From -> state.toWalletId
-        WalletTarget.To -> state.fromWalletId
+    // Only a transfer involves two wallets, so only there must the opposite side
+    // be excluded. For income/expense the other id is a leftover preselection
+    // (e.g. income keeps a stale fromWalletId) and must not hide a wallet.
+    val excludedId = if (state.type == TransactionType.TRANSFER) {
+        when (target) {
+            WalletTarget.From -> state.toWalletId
+            WalletTarget.To -> state.fromWalletId
+        }
+    } else {
+        null
     }
     val wallets = state.wallets.filter { it.id != excludedId }
     val selectedId = when (target) {

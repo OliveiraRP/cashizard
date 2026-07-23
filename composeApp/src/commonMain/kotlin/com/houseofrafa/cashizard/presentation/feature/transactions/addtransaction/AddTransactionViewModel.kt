@@ -229,9 +229,22 @@ class AddTransactionViewModel(
 
     // ---- form intents -----------------------------------------------------
 
-    fun onTypeChange(type: TransactionType) = _state.update {
-        // A category from the previous type would violate the DB's type check.
-        it.copy(type = type, categoryId = null, toWalletId = null, errorMessage = null)
+    fun onTypeChange(type: TransactionType) = _state.update { current ->
+        current.copy(
+            type = type,
+            // A category from the previous type would violate the DB's type check.
+            categoryId = null,
+            // Income has no source wallet; its destination is the one wallet it
+            // touches, so default it to the first wallet the way expense and
+            // transfer default their source. Every other type clears the
+            // destination — a transfer must never default it to the source.
+            toWalletId = if (type == TransactionType.INCOME) {
+                current.toWalletId ?: current.wallets.firstOrNull()?.id
+            } else {
+                null
+            },
+            errorMessage = null,
+        )
     }
 
     fun onDigit(digit: Int) = _state.update { it.copy(amount = it.amount.withDigit(digit)) }
