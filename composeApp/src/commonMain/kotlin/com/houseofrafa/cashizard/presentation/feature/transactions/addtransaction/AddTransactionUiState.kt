@@ -3,6 +3,7 @@ package com.houseofrafa.cashizard.presentation.feature.transactions.addtransacti
 import com.houseofrafa.cashizard.domain.model.Category
 import com.houseofrafa.cashizard.domain.model.CategoryGroup
 import com.houseofrafa.cashizard.domain.model.CategoryGroupWithCategories
+import com.houseofrafa.cashizard.domain.model.TransactionSource
 import com.houseofrafa.cashizard.domain.model.TransactionType
 import com.houseofrafa.cashizard.domain.model.Wallet
 import com.houseofrafa.cashizard.presentation.common.AmountBuffer
@@ -46,6 +47,15 @@ data class AddTransactionUiState(
     val categoryForm: CategoryFormUiState? = null,
     /** True when the sheet is editing an existing transaction rather than creating one. */
     val isEditing: Boolean = false,
+    /**
+     * Set once, from the transaction this sheet opened editing — never
+     * recomputed from [categoryId], so picking a category during this same
+     * session doesn't hide the rule prompt before the user can act on it.
+     */
+    val showBankRulePrompt: Boolean = false,
+    val bankDescription: String? = null,
+    val ruleMatchText: String = "",
+    val saveAsRule: Boolean = false,
     val loading: Boolean = true,
     val saving: Boolean = false,
     val deleting: Boolean = false,
@@ -131,6 +141,9 @@ data class AddTransactionUiState(
                 occurredOn = it.occurredOn,
                 note = it.note,
                 isEditing = true,
+                showBankRulePrompt = it.source == TransactionSource.BANK && it.categoryId == null,
+                bankDescription = it.description,
+                ruleMatchText = it.description.orEmpty(),
             )
         } ?: AddTransactionUiState()
     }

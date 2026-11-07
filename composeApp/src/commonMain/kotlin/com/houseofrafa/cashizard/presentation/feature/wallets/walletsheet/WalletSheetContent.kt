@@ -145,6 +145,7 @@ private fun WalletSheetChild(
                 EditAccountScreen(
                     form = form,
                     onNameChange = component.viewModel::onAccountNameChange,
+                    onDefaultWalletChange = component.viewModel::onDefaultWalletChange,
                     onArchive = component.viewModel::onArchiveAccount,
                 )
             }

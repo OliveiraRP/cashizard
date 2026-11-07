@@ -38,9 +38,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.ArrowRight
 import com.composables.icons.lucide.CalendarDays
+import com.composables.icons.lucide.Landmark
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.NotebookPen
 import com.composables.icons.lucide.RefreshCw
+import com.composables.icons.lucide.Sparkles
 import com.composables.icons.lucide.Wallet
 import com.houseofrafa.cashizard.domain.model.TransactionType
 import com.houseofrafa.cashizard.presentation.common.dayMonthLabel
@@ -53,6 +55,7 @@ import com.houseofrafa.cashizard.presentation.designsystem.components.CategoryCh
 import com.houseofrafa.cashizard.presentation.designsystem.components.FormCard
 import com.houseofrafa.cashizard.presentation.designsystem.components.InlineDatePicker
 import com.houseofrafa.cashizard.presentation.designsystem.components.InsetRow
+import com.houseofrafa.cashizard.presentation.designsystem.components.InsetTextRow
 import com.houseofrafa.cashizard.presentation.designsystem.components.Keypad
 import com.houseofrafa.cashizard.presentation.designsystem.components.SectionHeader
 import com.houseofrafa.cashizard.presentation.designsystem.components.SegmentedControl
@@ -145,6 +148,10 @@ fun NewTransactionScreen(
                 CategoryStrip(component = component, state = state)
             }
 
+            if (state.showBankRulePrompt) {
+                BankRulePrompt(component = component, state = state)
+            }
+
             FormCard(
                 cornerRadius = dimens.radiusControl,
                 modifier = Modifier.padding(
@@ -233,6 +240,58 @@ fun NewTransactionScreen(
                 .padding(start = 10.dp, end = 10.dp, top = dimens.space16, bottom = dimens.space32),
         )
     }
+}
+
+/**
+ * Shown only while editing a still-uncategorized bank-imported transaction.
+ * Surfaces the bank's own description, lets the user shorten it into a
+ * reusable match pattern, and offers to remember this category/wallet for
+ * every future transaction whose description contains that pattern.
+ */
+@Composable
+private fun BankRulePrompt(component: AddTransactionSheetComponent, state: AddTransactionUiState) {
+    val dimens = CashizardTheme.dimens
+
+    SectionHeader(title = "From Your Bank", style = CashizardTheme.typography.sectionLabelSmall)
+    FormCard(
+        cornerRadius = dimens.radiusControl,
+        modifier = Modifier.padding(horizontal = dimens.listPadding),
+        rows = listOf {
+            InsetRow(
+                label = state.bankDescription.orEmpty(),
+                leadingIcon = Lucide.Landmark,
+            )
+        },
+    )
+
+    SectionHeader(
+        title = "Match Text",
+        style = CashizardTheme.typography.sectionLabelSmall,
+    )
+    InsetTextRow(
+        value = state.ruleMatchText,
+        onValueChange = component.viewModel::onRuleMatchTextChange,
+        modifier = Modifier.padding(horizontal = dimens.listPadding),
+    )
+
+    FormCard(
+        cornerRadius = dimens.radiusControl,
+        modifier = Modifier.padding(horizontal = dimens.listPadding, vertical = dimens.space12),
+        rows = listOf {
+            InsetRow(
+                label = "Always categorize this way",
+                subtitle = "Future transactions matching the text above",
+                leadingIcon = Lucide.Sparkles,
+                minHeight = 58.dp,
+                trailing = {
+                    CashSwitch(
+                        checked = state.saveAsRule,
+                        onCheckedChange = component.viewModel::onSaveAsRuleToggle,
+                    )
+                },
+            )
+        },
+    )
 }
 
 /**

@@ -36,6 +36,7 @@ data class AccountBalanceDto(
     val name: String,
     val icon: String,
     @SerialName("sort_order") val sortOrder: Int,
+    @SerialName("default_wallet_id") val defaultWalletId: String? = null,
     val balance: Double,
 )
 
@@ -87,8 +88,35 @@ data class TransactionDto(
     @SerialName("category_id") val categoryId: String? = null,
     @SerialName("occurred_on") val occurredOn: String,
     val note: String? = null,
+    val description: String? = null,
     @SerialName("recurring_rule_id") val recurringRuleId: String? = null,
+    val source: String = "manual",
+    @SerialName("external_ref") val externalRef: String? = null,
     @SerialName("created_by") val createdBy: String,
+    @SerialName("created_at") val createdAt: String,
+)
+
+@Serializable
+data class ProfileDto(
+    val id: String,
+    @SerialName("display_name") val displayName: String,
+)
+
+@Serializable
+data class BankCategorizationRuleDto(
+    val id: String,
+    @SerialName("space_id") val spaceId: String,
+    @SerialName("match_text") val matchText: String,
+    @SerialName("category_id") val categoryId: String,
+    @SerialName("wallet_id") val walletId: String,
+)
+
+@Serializable
+data class BankAccountLinkDto(
+    val id: String,
+    @SerialName("space_id") val spaceId: String,
+    @SerialName("account_id") val accountId: String,
+    @SerialName("enable_banking_account_id") val enableBankingAccountId: String,
     @SerialName("created_at") val createdAt: String,
 )
 
@@ -196,7 +224,29 @@ data class TransactionInsertDto(
     @SerialName("category_id") val categoryId: String? = null,
     @SerialName("occurred_on") val occurredOn: String,
     val note: String? = null,
+    val source: String = "manual",
+    @SerialName("external_ref") val externalRef: String? = null,
     @SerialName("created_by") val createdBy: String,
+)
+
+@Serializable
+data class ProfileUpdateDto(
+    @SerialName("display_name") val displayName: String,
+)
+
+@Serializable
+data class BankCategorizationRuleUpsertDto(
+    @SerialName("space_id") val spaceId: String,
+    @SerialName("match_text") val matchText: String,
+    @SerialName("category_id") val categoryId: String,
+    @SerialName("wallet_id") val walletId: String,
+)
+
+@Serializable
+data class BankAccountLinkInsertDto(
+    @SerialName("space_id") val spaceId: String,
+    @SerialName("account_id") val accountId: String,
+    @SerialName("enable_banking_account_id") val enableBankingAccountId: String,
 )
 
 @Serializable

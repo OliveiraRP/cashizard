@@ -31,6 +31,17 @@ enum class WalletType(val wire: String) {
     }
 }
 
+/** Where a transaction came from. Bank-sourced rows may land without a category. */
+enum class TransactionSource(val wire: String) {
+    MANUAL("manual"),
+    BANK("bank");
+
+    companion object {
+        fun fromWire(value: String): TransactionSource =
+            entries.firstOrNull { it.wire == value } ?: MANUAL
+    }
+}
+
 /** A member's role within a space. */
 enum class SpaceRole(val wire: String) {
     OWNER("owner"),

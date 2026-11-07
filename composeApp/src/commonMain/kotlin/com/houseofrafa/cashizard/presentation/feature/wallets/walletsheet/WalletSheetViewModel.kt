@@ -53,8 +53,13 @@ class WalletSheetViewModel(
 
     /** Prefills the account form. Returns false when the account is not loaded yet. */
     fun startEditingAccount(accountId: String): Boolean {
-        val account = _state.value.account(accountId) ?: return false
-        _state.update { it.copy(accountForm = EditAccountUiState.from(account)) }
+        val current = _state.value
+        val account = current.account(accountId) ?: return false
+        val wallets = current.overview?.accounts
+            ?.firstOrNull { it.account.id == accountId }
+            ?.wallets
+            .orEmpty()
+        _state.update { it.copy(accountForm = EditAccountUiState.from(account, wallets)) }
         return true
     }
 
@@ -130,6 +135,9 @@ class WalletSheetViewModel(
     fun onAccountNameChange(value: String) =
         updateAccountForm { it.copy(name = value, errorMessage = null) }
 
+    fun onDefaultWalletChange(walletId: String) =
+        updateAccountForm { it.copy(defaultWalletId = walletId) }
+
     fun onSaveAccount() {
         val form = _state.value.accountForm ?: return
         if (!form.canSave) return
@@ -138,7 +146,11 @@ class WalletSheetViewModel(
         viewModelScope.launch {
             try {
                 accountRepository.updateAccount(
-                    UpdateAccount(id = form.accountId, name = form.name.trim()),
+                    UpdateAccount(
+                        id = form.accountId,
+                        name = form.name.trim(),
+                        defaultWalletId = form.defaultWalletId,
+                    ),
                 )
                 savedAndClose()
             } catch (e: Exception) {

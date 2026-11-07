@@ -7,6 +7,11 @@ import com.houseofrafa.cashizard.presentation.feature.analytics.filtercategories
 import com.houseofrafa.cashizard.presentation.feature.auth.LoginViewModel
 import com.houseofrafa.cashizard.presentation.feature.auth.SignUpViewModel
 import com.houseofrafa.cashizard.presentation.feature.main.MainViewModel
+import com.houseofrafa.cashizard.presentation.feature.categories.editor.EditCategoriesViewModel
+import com.houseofrafa.cashizard.presentation.feature.settings.SettingsViewModel
+import com.houseofrafa.cashizard.presentation.feature.settings.connectbank.ConnectBankAccountViewModel
+import com.houseofrafa.cashizard.presentation.feature.settings.editprofile.EditProfileViewModel
+import com.houseofrafa.cashizard.presentation.feature.settings.rules.EditRulesViewModel
 import com.houseofrafa.cashizard.presentation.feature.transactions.TransactionsViewModel
 import com.houseofrafa.cashizard.presentation.feature.wallets.addaccount.AddAccountViewModel
 import com.houseofrafa.cashizard.presentation.feature.wallets.addwallet.AddWalletViewModel
@@ -38,6 +43,12 @@ val presentationModule = module {
     factory { AddWalletViewModel(get(), get(), get()) }
     factory { WalletSheetViewModel(get(), get(), get(), get(), get()) }
 
+    factory { SettingsViewModel(get(), get(), get(), get(), get()) }
+    factory { EditProfileViewModel(get()) }
+    factory { EditCategoriesViewModel(get(), get()) }
+    factory { ConnectBankAccountViewModel(get(), get(), get(), get()) }
+    factory { EditRulesViewModel(get(), get(), get(), get()) }
+
     // The transaction being edited is only known at navigation time; a new
     // transaction passes null and the sheet starts blank.
     factory { params ->
@@ -47,6 +58,7 @@ val presentationModule = module {
             walletRepository = get(),
             categoryRepository = get(),
             recurringRuleRepository = get(),
+            bankCategorizationRuleRepository = get(),
             spaceSession = get(),
             editing = params.getOrNull<EditingTransaction>(),
         )

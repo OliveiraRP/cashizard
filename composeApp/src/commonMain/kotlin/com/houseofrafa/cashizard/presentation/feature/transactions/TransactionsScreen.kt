@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -19,6 +20,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -29,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.ChevronRight
@@ -36,6 +40,7 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.ReceiptText
 import com.houseofrafa.cashizard.domain.model.Money
 import com.houseofrafa.cashizard.domain.model.Transaction
+import com.houseofrafa.cashizard.domain.model.TransactionSource
 import com.houseofrafa.cashizard.domain.model.TransactionType
 import com.houseofrafa.cashizard.domain.usecase.TransactionDay
 import com.houseofrafa.cashizard.domain.usecase.TransactionDetails
@@ -268,20 +273,22 @@ private fun TransactionRow(details: TransactionDetails, onClick: () -> Unit) {
         onClick = onClick,
         leading = {
             if (isTransfer) {
-                IconDisc(
+                IconDiscWithBadge(
                     icon = iconFor("arrow-right-left"),
                     color = colors.surfaceRaised,
                     style = IconDiscStyle.Solid,
                     size = dimens.iconDisc,
                     iconSize = 18.dp,
+                    showBadge = transaction.source == TransactionSource.BANK,
                 )
             } else {
-                IconDisc(
+                IconDiscWithBadge(
                     icon = iconFor(details.category?.icon),
                     color = CategoryColors.parse(details.group?.color),
                     style = IconDiscStyle.Solid,
                     size = dimens.iconDisc,
                     iconSize = 18.dp,
+                    showBadge = transaction.source == TransactionSource.BANK,
                 )
             }
         },
@@ -289,6 +296,36 @@ private fun TransactionRow(details: TransactionDetails, onClick: () -> Unit) {
             Text(text = amountText, style = CashizardTheme.typography.amount, color = amountColor)
         },
     )
+}
+
+/**
+ * An [IconDisc] with a small red dot at its top-right corner for transactions
+ * the bank sync created automatically — a quiet "this wasn't typed by hand"
+ * marker, regardless of whether it's since been categorized.
+ */
+@Composable
+private fun IconDiscWithBadge(
+    icon: ImageVector,
+    color: Color,
+    style: IconDiscStyle,
+    size: Dp,
+    iconSize: Dp,
+    showBadge: Boolean,
+) {
+    Box {
+        IconDisc(icon = icon, color = color, style = style, size = size, iconSize = iconSize)
+        if (showBadge) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .offset(x = 2.dp, y = (-2).dp)
+                    .size(10.dp)
+                    .background(CashizardTheme.colors.background, CircleShape)
+                    .padding(1.5.dp)
+                    .background(CashizardTheme.colors.negative, CircleShape),
+            )
+        }
+    }
 }
 
 /** Transfers read as "source → destination"; everything else is its category. */
@@ -300,8 +337,9 @@ private fun TransactionDetails.rowTitle(): String =
     }
 
 /** The note, or nothing — the wallet is implied by the screen and left off the row. */
+/** The user's own note if they wrote one; otherwise the bank's description, for auto-imported rows. */
 private fun TransactionDetails.rowSubtitle(): String? =
-    transaction.note?.takeIf { it.isNotBlank() }
+    transaction.note?.takeIf { it.isNotBlank() } ?: transaction.description?.takeIf { it.isNotBlank() }
 
 @Composable
 private fun EmptyMonth(onAddTransaction: () -> Unit) {

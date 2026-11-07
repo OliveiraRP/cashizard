@@ -1,6 +1,7 @@
 package com.houseofrafa.cashizard.presentation.feature.transactions.addtransaction
 
 import com.houseofrafa.cashizard.domain.model.Money
+import com.houseofrafa.cashizard.domain.model.TransactionSource
 import com.houseofrafa.cashizard.domain.model.TransactionType
 import kotlinx.datetime.LocalDate
 
@@ -14,4 +15,6 @@ data class EditingTransaction(
     val categoryId: String?,
     val occurredOn: LocalDate,
     val note: String,
+    val description: String?,
+    val source: TransactionSource,
 )

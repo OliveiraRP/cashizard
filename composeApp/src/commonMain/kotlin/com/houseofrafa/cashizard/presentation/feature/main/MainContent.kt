@@ -19,6 +19,7 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.composables.icons.lucide.ChartPie
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.ReceiptText
+import com.composables.icons.lucide.Settings
 import com.composables.icons.lucide.Wallet
 import com.houseofrafa.cashizard.presentation.designsystem.theme.CashizardTheme
 import com.houseofrafa.cashizard.presentation.designsystem.components.Fab
@@ -28,6 +29,11 @@ import com.houseofrafa.cashizard.presentation.designsystem.components.TabItem
 import com.houseofrafa.cashizard.presentation.feature.transactions.addtransaction.AddTransactionSheetContent
 import com.houseofrafa.cashizard.presentation.feature.analytics.AnalyticsScreen
 import com.houseofrafa.cashizard.presentation.feature.analytics.filtercategories.FilterCategoriesSheetContent
+import com.houseofrafa.cashizard.presentation.feature.categories.editor.EditCategoriesSheetContent
+import com.houseofrafa.cashizard.presentation.feature.settings.SettingsScreen
+import com.houseofrafa.cashizard.presentation.feature.settings.connectbank.ConnectBankAccountSheetContent
+import com.houseofrafa.cashizard.presentation.feature.settings.editprofile.EditProfileSheetContent
+import com.houseofrafa.cashizard.presentation.feature.settings.rules.EditRulesSheetContent
 import com.houseofrafa.cashizard.presentation.feature.transactions.TransactionsScreen
 import com.houseofrafa.cashizard.presentation.feature.wallets.addaccount.AddAccountSheetContent
 import com.houseofrafa.cashizard.presentation.feature.wallets.addwallet.AddWalletSheetContent
@@ -38,6 +44,7 @@ private val tabItems = listOf(
     TabItem("Transactions", Lucide.ReceiptText),
     TabItem("Wallets", Lucide.Wallet),
     TabItem("Analytics", Lucide.ChartPie),
+    TabItem("Settings", Lucide.Settings),
 )
 
 /**
@@ -83,6 +90,16 @@ fun MainContent(component: MainComponent, modifier: Modifier = Modifier) {
                             viewModel = instance.viewModel,
                             spaceName = activeSpace?.name,
                             onFilterCategories = component::onFilterCategoriesClick,
+                        )
+
+                    is MainComponent.Child.Settings ->
+                        SettingsScreen(
+                            viewModel = instance.viewModel,
+                            spaceName = activeSpace?.name,
+                            onEditProfile = component::onEditProfileClick,
+                            onEditCategories = component::onEditCategoriesClick,
+                            onEditRules = component::onEditRulesClick,
+                            onConnectBankAccount = component::onConnectBankAccountClick,
                         )
                 }
             }
@@ -152,6 +169,46 @@ fun MainContent(component: MainComponent, modifier: Modifier = Modifier) {
                     closeRequested = state.closeRequested,
                 ) {
                     FilterCategoriesSheetContent(instance.component)
+                }
+            }
+
+            is MainComponent.SheetChild.EditProfile -> {
+                val state by instance.component.viewModel.state.collectAsState()
+                PageSheet(
+                    onDismissRequest = instance.component::onDismissed,
+                    closeRequested = state.closeRequested,
+                ) {
+                    EditProfileSheetContent(instance.component)
+                }
+            }
+
+            is MainComponent.SheetChild.EditCategories -> {
+                val state by instance.component.viewModel.state.collectAsState()
+                PageSheet(
+                    onDismissRequest = instance.component::onDismissed,
+                    closeRequested = state.closeRequested,
+                ) {
+                    EditCategoriesSheetContent(instance.component)
+                }
+            }
+
+            is MainComponent.SheetChild.ConnectBankAccount -> {
+                val state by instance.component.viewModel.state.collectAsState()
+                PageSheet(
+                    onDismissRequest = instance.component::onDismissed,
+                    closeRequested = state.closeRequested,
+                ) {
+                    ConnectBankAccountSheetContent(instance.component)
+                }
+            }
+
+            is MainComponent.SheetChild.EditRules -> {
+                val state by instance.component.viewModel.state.collectAsState()
+                PageSheet(
+                    onDismissRequest = instance.component::onDismissed,
+                    closeRequested = state.closeRequested,
+                ) {
+                    EditRulesSheetContent(instance.component)
                 }
             }
 

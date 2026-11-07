@@ -38,7 +38,10 @@ class AccountRepositoryImpl(
     }
 
     override suspend fun updateAccount(command: UpdateAccount): Account {
-        client.from("accounts").update({ set("name", command.name) }) {
+        client.from("accounts").update({
+            set("name", command.name)
+            set("default_wallet_id", command.defaultWalletId)
+        }) {
             filter { eq("id", command.id) }
         }
 

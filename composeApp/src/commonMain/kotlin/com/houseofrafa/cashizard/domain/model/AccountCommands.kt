@@ -10,4 +10,5 @@ data class NewAccount(
 data class UpdateAccount(
     val id: String,
     val name: String,
+    val defaultWalletId: String? = null,
 )

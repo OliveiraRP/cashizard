@@ -13,6 +13,7 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
 import com.houseofrafa.cashizard.domain.model.Money
 import com.houseofrafa.cashizard.domain.model.Transaction
+import com.houseofrafa.cashizard.domain.model.TransactionSource
 import com.houseofrafa.cashizard.domain.model.TransactionType
 import com.houseofrafa.cashizard.presentation.arch.koinViewModel
 import com.houseofrafa.cashizard.presentation.feature.transactions.addtransaction.AddTransactionSheetComponent
@@ -25,6 +26,11 @@ import com.houseofrafa.cashizard.presentation.feature.wallets.addwallet.AddWalle
 import com.houseofrafa.cashizard.presentation.feature.wallets.walletsheet.WalletSheetComponent
 import com.houseofrafa.cashizard.presentation.feature.wallets.walletsheet.WalletSheetConfig
 import com.houseofrafa.cashizard.presentation.feature.wallets.WalletsViewModel
+import com.houseofrafa.cashizard.presentation.feature.categories.editor.EditCategoriesSheetComponent
+import com.houseofrafa.cashizard.presentation.feature.settings.SettingsViewModel
+import com.houseofrafa.cashizard.presentation.feature.settings.connectbank.ConnectBankAccountSheetComponent
+import com.houseofrafa.cashizard.presentation.feature.settings.editprofile.EditProfileSheetComponent
+import com.houseofrafa.cashizard.presentation.feature.settings.rules.EditRulesSheetComponent
 import kotlinx.datetime.LocalDate
 
 /**
@@ -67,6 +73,7 @@ class MainComponent(
                 MainTab.Transactions -> MainConfig.Transactions
                 MainTab.Wallets -> MainConfig.Wallets
                 MainTab.Analytics -> MainConfig.Analytics
+                MainTab.Settings -> MainConfig.Settings
             },
         )
     }
@@ -84,6 +91,8 @@ class MainComponent(
             categoryId = transaction.categoryId,
             occurredOn = transaction.occurredOn.toString(),
             note = transaction.note.orEmpty(),
+            description = transaction.description,
+            source = transaction.source.wire,
         ),
     )
 
@@ -98,6 +107,14 @@ class MainComponent(
 
     fun onFilterCategoriesClick() = openSheet(SheetConfig.FilterCategories)
 
+    fun onEditProfileClick() = openSheet(SheetConfig.EditProfile)
+
+    fun onEditCategoriesClick() = openSheet(SheetConfig.EditCategories)
+
+    fun onConnectBankAccountClick() = openSheet(SheetConfig.ConnectBankAccount)
+
+    fun onEditRulesClick() = openSheet(SheetConfig.EditRules)
+
     /** No space means nothing to attach to, so the sheet stays closed. */
     private fun openSheet(config: SheetConfig) {
         if (viewModel.hasActiveSpace()) sheetNavigation.activate(config)
@@ -107,6 +124,7 @@ class MainComponent(
         MainConfig.Transactions -> Child.Transactions(context.koinViewModel<TransactionsViewModel>())
         MainConfig.Wallets -> Child.Wallets(context.koinViewModel<WalletsViewModel>())
         MainConfig.Analytics -> Child.Analytics(context.koinViewModel<AnalyticsViewModel>())
+        MainConfig.Settings -> Child.Settings(context.koinViewModel<SettingsViewModel>())
     }
 
     private fun createSheetChild(
@@ -133,6 +151,8 @@ class MainComponent(
                         categoryId = config.categoryId,
                         occurredOn = LocalDate.parse(config.occurredOn),
                         note = config.note,
+                        description = config.description,
+                        source = TransactionSource.fromWire(config.source),
                     ),
                 ),
             )
@@ -164,6 +184,22 @@ class MainComponent(
             SheetConfig.FilterCategories -> SheetChild.FilterCategories(
                 FilterCategoriesSheetComponent(context, onDismiss = dismiss),
             )
+
+            SheetConfig.EditProfile -> SheetChild.EditProfile(
+                EditProfileSheetComponent(context, onDismiss = dismiss),
+            )
+
+            SheetConfig.EditCategories -> SheetChild.EditCategories(
+                EditCategoriesSheetComponent(context, onDismiss = dismiss),
+            )
+
+            SheetConfig.ConnectBankAccount -> SheetChild.ConnectBankAccount(
+                ConnectBankAccountSheetComponent(context, onDismiss = dismiss),
+            )
+
+            SheetConfig.EditRules -> SheetChild.EditRules(
+                EditRulesSheetComponent(context, onDismiss = dismiss),
+            )
         }
     }
 
@@ -182,6 +218,10 @@ class MainComponent(
         data class Analytics(val viewModel: AnalyticsViewModel) : Child {
             override val tab: MainTab get() = MainTab.Analytics
         }
+
+        data class Settings(val viewModel: SettingsViewModel) : Child {
+            override val tab: MainTab get() = MainTab.Settings
+        }
     }
 
     /** Sheets keep their own components: each hosts an internal push stack. */
@@ -191,5 +231,9 @@ class MainComponent(
         data class AddAccount(val component: AddAccountSheetComponent) : SheetChild
         data class WalletSheet(val component: WalletSheetComponent) : SheetChild
         data class FilterCategories(val component: FilterCategoriesSheetComponent) : SheetChild
+        data class EditProfile(val component: EditProfileSheetComponent) : SheetChild
+        data class EditCategories(val component: EditCategoriesSheetComponent) : SheetChild
+        data class ConnectBankAccount(val component: ConnectBankAccountSheetComponent) : SheetChild
+        data class EditRules(val component: EditRulesSheetComponent) : SheetChild
     }
 }

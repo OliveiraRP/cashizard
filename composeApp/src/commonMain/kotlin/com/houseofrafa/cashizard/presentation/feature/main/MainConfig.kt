@@ -13,6 +13,9 @@ sealed interface MainConfig {
 
     @Serializable
     data object Analytics : MainConfig
+
+    @Serializable
+    data object Settings : MainConfig
 }
 
 /** What the modal page sheet can be opened at. */
@@ -35,6 +38,8 @@ sealed interface SheetConfig {
         val categoryId: String?,
         val occurredOn: String,
         val note: String,
+        val description: String?,
+        val source: String,
     ) : SheetConfig
 
     @Serializable
@@ -51,4 +56,18 @@ sealed interface SheetConfig {
 
     @Serializable
     data object FilterCategories : SheetConfig
+
+    @Serializable
+    data object EditProfile : SheetConfig
+
+    /** The standalone Edit-Categories sheet, opened from Settings. */
+    @Serializable
+    data object EditCategories : SheetConfig
+
+    @Serializable
+    data object ConnectBankAccount : SheetConfig
+
+    /** Settings' "Automatic Categorization Rules" sheet. */
+    @Serializable
+    data object EditRules : SheetConfig
 }

@@ -1,19 +1,26 @@
 package com.houseofrafa.cashizard.data.mapper
 
 import com.houseofrafa.cashizard.data.dto.AccountBalanceDto
+import com.houseofrafa.cashizard.data.dto.BankAccountLinkDto
+import com.houseofrafa.cashizard.data.dto.BankCategorizationRuleDto
 import com.houseofrafa.cashizard.data.dto.CategoryDto
 import com.houseofrafa.cashizard.data.dto.CategoryGroupDto
+import com.houseofrafa.cashizard.data.dto.ProfileDto
 import com.houseofrafa.cashizard.data.dto.RecurringRuleDto
 import com.houseofrafa.cashizard.data.dto.SpaceTotalsDto
 import com.houseofrafa.cashizard.data.dto.TransactionDto
 import com.houseofrafa.cashizard.data.dto.WalletBalanceDto
 import com.houseofrafa.cashizard.domain.model.Account
+import com.houseofrafa.cashizard.domain.model.BankAccountLink
+import com.houseofrafa.cashizard.domain.model.BankCategorizationRule
 import com.houseofrafa.cashizard.domain.model.Category
 import com.houseofrafa.cashizard.domain.model.CategoryGroup
 import com.houseofrafa.cashizard.domain.model.Money
+import com.houseofrafa.cashizard.domain.model.Profile
 import com.houseofrafa.cashizard.domain.model.RecurringRule
 import com.houseofrafa.cashizard.domain.model.SpaceTotals
 import com.houseofrafa.cashizard.domain.model.Transaction
+import com.houseofrafa.cashizard.domain.model.TransactionSource
 import com.houseofrafa.cashizard.domain.model.TransactionType
 import com.houseofrafa.cashizard.domain.model.Wallet
 import com.houseofrafa.cashizard.domain.model.WalletType
@@ -36,6 +43,7 @@ fun AccountBalanceDto.toDomain(): Account = Account(
     icon = icon,
     sortOrder = sortOrder,
     balance = balance.toMoney(),
+    defaultWalletId = defaultWalletId,
 )
 
 fun WalletBalanceDto.toDomain(): Wallet = Wallet(
@@ -82,8 +90,29 @@ fun TransactionDto.toDomain(): Transaction = Transaction(
     categoryId = categoryId,
     occurredOn = LocalDate.parse(occurredOn),
     note = note,
+    description = description,
     recurringRuleId = recurringRuleId,
+    source = TransactionSource.fromWire(source),
+    externalRef = externalRef,
     createdBy = createdBy,
+    createdAt = Instant.parse(createdAt),
+)
+
+fun ProfileDto.toDomain(): Profile = Profile(id = id, displayName = displayName)
+
+fun BankCategorizationRuleDto.toDomain(): BankCategorizationRule = BankCategorizationRule(
+    id = id,
+    spaceId = spaceId,
+    matchText = matchText,
+    categoryId = categoryId,
+    walletId = walletId,
+)
+
+fun BankAccountLinkDto.toDomain(): BankAccountLink = BankAccountLink(
+    id = id,
+    spaceId = spaceId,
+    accountId = accountId,
+    enableBankingAccountId = enableBankingAccountId,
     createdAt = Instant.parse(createdAt),
 )
 

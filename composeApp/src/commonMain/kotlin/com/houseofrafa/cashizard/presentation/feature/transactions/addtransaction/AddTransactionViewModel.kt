@@ -2,6 +2,7 @@ package com.houseofrafa.cashizard.presentation.feature.transactions.addtransacti
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.houseofrafa.cashizard.domain.model.NewBankCategorizationRule
 import com.houseofrafa.cashizard.domain.model.NewCategory
 import com.houseofrafa.cashizard.domain.model.NewCategoryGroup
 import com.houseofrafa.cashizard.domain.model.NewRecurringRule
@@ -10,6 +11,7 @@ import com.houseofrafa.cashizard.domain.model.TransactionType
 import com.houseofrafa.cashizard.domain.model.UpdateCategory
 import com.houseofrafa.cashizard.domain.model.UpdateCategoryGroup
 import com.houseofrafa.cashizard.domain.model.UpdateTransaction
+import com.houseofrafa.cashizard.domain.repository.BankCategorizationRuleRepository
 import com.houseofrafa.cashizard.domain.repository.CategoryRepository
 import com.houseofrafa.cashizard.domain.repository.RecurringRuleRepository
 import com.houseofrafa.cashizard.domain.repository.TransactionRepository
@@ -46,6 +48,7 @@ class AddTransactionViewModel(
     private val walletRepository: WalletRepository,
     private val categoryRepository: CategoryRepository,
     private val recurringRuleRepository: RecurringRuleRepository,
+    private val bankCategorizationRuleRepository: BankCategorizationRuleRepository,
     private val spaceSession: SpaceSession,
     /** When set, the sheet edits this transaction instead of creating one. */
     private val editing: EditingTransaction? = null,
@@ -289,6 +292,10 @@ class AddTransactionViewModel(
         }
     }
 
+    fun onRuleMatchTextChange(value: String) = _state.update { it.copy(ruleMatchText = value) }
+
+    fun onSaveAsRuleToggle(enabled: Boolean) = _state.update { it.copy(saveAsRule = enabled) }
+
     fun onSave() {
         val current = _state.value
         if (!current.canSave) return
@@ -313,6 +320,23 @@ class AddTransactionViewModel(
                             note = current.note.takeIf { it.isNotBlank() },
                         ),
                     )
+                }
+
+                // Remembering a categorization rule only ever affects future bank
+                // syncs — it never rewrites other already-saved transactions.
+                val categoryId = current.categoryId
+                if (current.showBankRulePrompt && current.saveAsRule && categoryId != null) {
+                    val walletId = current.effectiveFromWalletId ?: current.effectiveToWalletId
+                    if (walletId != null && current.ruleMatchText.isNotBlank()) {
+                        bankCategorizationRuleRepository.upsertRule(
+                            NewBankCategorizationRule(
+                                spaceId = spaceSession.requireSpaceId(),
+                                matchText = current.ruleMatchText,
+                                categoryId = categoryId,
+                                walletId = walletId,
+                            ),
+                        )
+                    }
                 }
 
                 spaceSession.notifyDataChanged()
